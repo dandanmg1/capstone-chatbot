@@ -4,7 +4,19 @@ const App = () => {
     const [value, setValue] = useState (null)
     const [message, setMessage]  = useState(null)
     const [previousChats, setPreviousChats] = useState([])
-    const [currentTitle, setCurrentTitle] = useState([])
+    const [currentTitle, setCurrentTitle] = useState(null)
+
+    const createNewChat = () => {
+      setMessage(null)
+      setValue("")
+      setCurrentTitle(null)
+    }
+
+    const handleClick = (uniqueTitle) => {
+      setCurrentTitle(uniqueTitle)
+      setMessage(null)
+      setValue("")
+    }
 
     const getMessages = async () => {
       const options = {
@@ -49,21 +61,30 @@ const App = () => {
     }
   }, [message, currentTitle])
 
+  console.log(previousChats)
+
+  const currentChat = previousChats.filter(previousChats => previousChats.title === currentTitle)
+  const uniqueTitles = Array.from (new Set(previousChats.map(previousChat => previousChat.title)))
+  console.log(uniqueTitles)
+  
   return (
     <div className="app">
       <section className="side-bar">
-        <button>+ New Chat</button>
+        <button onClick={createNewChat}>+ New Chat</button>
         <ul className="history">
-          <li>BLUGH</li>
+          {uniqueTitles?.map((uniqueTitle, index) => <li key={index} onClick={() => handleClick}>{uniqueTitle}</li>)}
         </ul>
         <nav>
           <p>Made by Innergy</p>
         </nav>
       </section>
       <section className="main">
-        <h1>InnergyGPT</h1>
+        {!currentTitle && <h1>InnergyGPT</h1>}
         <ul className="feed">
-
+          {currentChat?.map((chatMessage, index) => <li key={index}>
+            <p className="role">{chatMessage.role}</p>
+            <p>{chatMessage.content}</p>
+          </li>)}
         </ul>
         <div className="bottom-section">
           <div className="input-container">
